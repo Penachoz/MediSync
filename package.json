@@ -1,0 +1,12 @@
+{
+  "name": "medisync",
+  "version": "1.0.0",
+  "description": "MediSync es una aplicación web desarrollada por estudiantes de Ingeniería Informática de la Universidad Autónoma de Occidente. El sistema permite a pacientes agendar, modificar y cancelar citas médicas de forma centralizada, con acceso a su historial médico desde cualquier clínica de la red, todo bajo altos estándares de seguridad y disponibilidad.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

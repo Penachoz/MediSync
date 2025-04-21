@@ -1,0 +1,70 @@
+/* register.css */
+.container {
+    padding: 2rem;
+    max-width: 400px;
+    margin: 0 auto;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+  }
+  
+  input:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  .message {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 1rem;
+    color: #28a745;
+  }
+  
+  .message-error {
+    color: #dc3545;
+  }
+  
+  .redirect-link {
+    text-align: center;
+    margin-top: 1rem;
+  }
+  
+  .redirect-link a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .redirect-link a:hover {
+    text-decoration: underline;
+  }
+  
