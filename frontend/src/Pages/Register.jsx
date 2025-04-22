@@ -7,9 +7,9 @@ function Register() {
     email: '',
     password: ''
   });
-
   const [message, setMessage] = useState('');
   const [messageClass, setMessageClass] = useState('');
+  const [loading, setLoading] = useState(false);  // Estado para deshabilitar el botón mientras se envía
 
   const handleChange = e => {
     setForm({
@@ -18,16 +18,42 @@ function Register() {
     });
   };
 
+  const validateForm = () => {
+    const { email, password } = form;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      return 'Por favor ingresa un correo electrónico válido.';
+    }
+    if (!password || password.length < 6) {
+      return 'La contraseña debe tener al menos 6 caracteres.';
+    }
+    return null;  // Todo está bien
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
+    const error = validateForm();
+    if (error) {
+      setMessageClass('message-error');
+      setMessage(error);
+      return;
+    }
+
+    setLoading(true);
     try {
-      const res = await axios.post('http://localhost:5000/api/users/register', form);
+      await axios.post('http://localhost:5000/api/usuarios/register', {
+        username: form.email,
+        password: form.password,
+        tipo_usuario: 'paciente' // puedes cambiar según el rol
+      });
       setMessageClass('message');
       setMessage('Registro exitoso. Ahora puedes iniciar sesión.');
       setForm({ email: '', password: '' });
     } catch (error) {
       setMessageClass('message-error');
-      setMessage('Error al registrar. ¿El correo ya está registrado?');
+      setMessage(error.response?.data?.msg || 'Error al registrar. ¿El usuario ya está registrado?');
+    } finally {
+      setLoading(false);  // Volver a habilitar el botón
     }
   };
 
@@ -53,7 +79,9 @@ function Register() {
           required
         />
         <br />
-        <button type="submit">Registrarse</button>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Registrando...' : 'Registrarse'}
+        </button>
       </form>
       {message && <p className={messageClass}>{message}</p>}
       <div className="redirect-link">
