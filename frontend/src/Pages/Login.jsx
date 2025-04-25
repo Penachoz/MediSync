@@ -12,11 +12,26 @@ function Login() {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5000/api/usuarios/login', { username: email, password });
-      localStorage.setItem('token', res.data.token);
+      // Enviamos los datos de inicio de sesión al backend
+      const res = await axios.post('http://localhost:5000/api/usuarios/login', {
+        username: email, // backend espera "username"
+        password,
+      });
+
+      const token = res.data.token;
+      localStorage.setItem('token', token);
       setError('');
-      alert('Login exitoso');
-      navigate('/');
+
+      // Decodificamos el token para saber si tiene acceso a /secreto
+      const payload = JSON.parse(atob(token.split('.')[1]));
+
+      if (payload.accesoSecreto) {
+        alert('Bienvenido admin');
+        navigate('/register');
+      } else {
+        alert('Login exitoso');
+        navigate('/');
+      }
     } catch (err) {
       setError('Correo o contraseña incorrectos.');
     }
@@ -43,9 +58,11 @@ function Login() {
           />
           {error && <p className="login-error">{error}</p>}
           <button type="submit">Iniciar Sesión</button>
+          {/* 
           <button type="button" className="register-btn" onClick={() => navigate('/register')}>
             Registrarse
           </button>
+          */}
         </form>
       </div>
     </div>
