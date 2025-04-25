@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 // Correo del admin para registrar
-const CORREO_SECRETO = "admin@secreto.com";
+const CORREO_SECRETO = "admin@secreto.com";//123456
 
 // Función de validación para datos de registro
 const validarRegistro = (username, password) => {
