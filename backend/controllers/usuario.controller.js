@@ -5,17 +5,42 @@ const jwt = require('jsonwebtoken');
 // Correo del admin para registrar
 const CORREO_SECRETO = "admin@secreto.com";
 
+// Función de validación para datos de registro
+const validarRegistro = (username, password) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!username || !emailRegex.test(username)) {
+    return 'Por favor ingresa un correo electrónico válido.';
+  }
+  if (!password || password.length < 6) {
+    return 'La contraseña debe tener al menos 6 caracteres.';
+  }
+  return null;
+};
+
 exports.registrar = async (req, res) => {
   try {
     console.log("Cuerpo recibido:", req.body);
 
     const { username, password, tipo_usuario, estado } = req.body;
 
+    // Validación de los datos
+    const error = validarRegistro(username, password);
+    if (error) {
+      return res.status(400).json({ msg: error });
+    }
+
+    // Comprobamos si el usuario ya existe
+    const usuarioExistente = await Usuario.findOne({ username });
+    if (usuarioExistente) {
+      return res.status(400).json({ msg: 'El correo electrónico ya está registrado.' });
+    }
+
+    // Encriptamos la contraseña
     const password_hash = await bcrypt.hash(password, 10);
 
     const usuario = new Usuario({
       username,
-      password_hash,
+      password_hash, // Usar password_hash en lugar de password
       tipo_usuario,
       estado: estado || 'activo',
       ultimo_access: new Date()
@@ -32,11 +57,17 @@ exports.registrar = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { username, password } = req.body;
+
+    // Validación de datos de entrada
+    if (!username || !password) {
+      return res.status(400).json({ msg: 'El correo y la contraseña son obligatorios.' });
+    }
+
     const usuario = await Usuario.findOne({ username });
 
     if (!usuario) return res.status(404).json({ msg: 'Usuario no encontrado' });
 
-    const valido = await bcrypt.compare(password, usuario.password_hash);
+    const valido = await bcrypt.compare(password, usuario.password_hash); // Cambié esto a password_hash
     if (!valido) return res.status(401).json({ msg: 'Contraseña incorrecta' });
 
     usuario.ultimo_access = new Date();
