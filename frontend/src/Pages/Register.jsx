@@ -5,11 +5,12 @@ import './Register.css';
 function Register() {
   const [form, setForm] = useState({
     email: '',
-    password: ''
+    password: '',
+    tipo_usuario: 'paciente' // Valor por defecto
   });
   const [message, setMessage] = useState('');
   const [messageClass, setMessageClass] = useState('');
-  const [loading, setLoading] = useState(false);  // Estado para deshabilitar el botón mientras se envía
+  const [loading, setLoading] = useState(false);
 
   const handleChange = e => {
     setForm({
@@ -27,7 +28,7 @@ function Register() {
     if (!password || password.length < 6) {
       return 'La contraseña debe tener al menos 6 caracteres.';
     }
-    return null;  // Todo está bien
+    return null;
   };
 
   const handleSubmit = async e => {
@@ -44,16 +45,16 @@ function Register() {
       await axios.post('http://localhost:5000/api/usuarios/register', {
         username: form.email,
         password: form.password,
-        tipo_usuario: 'paciente' // puedes cambiar según el rol
+        tipo_usuario: form.tipo_usuario
       });
       setMessageClass('message');
       setMessage('Registro exitoso. Ahora puedes iniciar sesión.');
-      setForm({ email: '', password: '' });
+      setForm({ email: '', password: '', tipo_usuario: 'paciente' });
     } catch (error) {
       setMessageClass('message-error');
       setMessage(error.response?.data?.msg || 'Error al registrar. ¿El usuario ya está registrado?');
     } finally {
-      setLoading(false);  // Volver a habilitar el botón
+      setLoading(false);
     }
   };
 
@@ -79,14 +80,23 @@ function Register() {
           required
         />
         <br />
+        <select
+          name="tipo_usuario"
+          value={form.tipo_usuario}
+          onChange={handleChange}
+          required>
+          <option value="medico">Médico</option>
+          <option value="paciente">Paciente</option>
+        </select>
+        <br />
         <button type="submit" disabled={loading}>
-          {loading ? 'Registrando...' : 'Registrarse'}
+          {loading ? 'Registrando...' : 'Registrar'}
         </button>
       </form>
       {message && <p className={messageClass}>{message}</p>}
-      <div className="redirect-link">
+      {/*<div className="redirect-link">
         <p>¿Ya tienes una cuenta? <a href="/login">Inicia sesión aquí</a></p>
-      </div>
+      </div>*/}
     </div>
   );
 }

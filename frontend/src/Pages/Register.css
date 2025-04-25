@@ -67,4 +67,39 @@
   .redirect-link a:hover {
     text-decoration: underline;
   }
+  select {
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: white;
+    color: #333;
+    cursor: pointer;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+  }
+  
+  select:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  select option {
+    padding: 10px;
+    font-size: 16px;
+  }
+  
+  select:hover {
+    background-color: #f0f0f0;
+  }
+  
+  select:focus {
+    background-color: #e6f0ff;
+  }
+  
+  select:disabled {
+    background-color: #f7f7f7;
+    color: #aaa;
+    cursor: not-allowed;
+  }
   
