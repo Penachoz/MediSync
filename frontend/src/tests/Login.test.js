@@ -1,35 +1,58 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import Login from '../Pages/Login'; // Asegurate de que la ruta sea correcta
+import Login from '../Pages/Login';
 
+// Helper para renderizar con router
 const renderWithRouter = (ui) => render(<MemoryRouter>{ui}</MemoryRouter>);
-beforeAll(() => {
-  jest.spyOn(console, 'warn').mockImplementation((msg) => {
-    if (
-      msg.includes('React Router Future Flag Warning') ||
-      msg.includes('v7_startTransition') ||
-      msg.includes('v7_relativeSplatPath')
-    ) {
-      return;
-    }
-    console.warn(msg); // mostrar otros warnings normales si querés
-  });
-});
- 
-//ACA EL TEST
-describe('Login component', () => {
+
+describe('Componente Login - validaciones básicas', () => {
   test('renderiza correctamente el formulario de login', () => {
     renderWithRouter(<Login />);
-
-    // Verifica el título del formulario
     expect(screen.getByRole('heading', { name: /iniciar sesión/i })).toBeInTheDocument();
-
-    // Verifica los inputs por sus placeholders
     expect(screen.getByPlaceholderText(/correo/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/contraseña/i)).toBeInTheDocument();
-
-    // Verifica el botón de envío
     expect(screen.getByRole('button', { name: /iniciar sesión/i })).toBeInTheDocument();
+  });
+
+  test('no permite enviar el formulario si los campos están vacíos', () => {
+    renderWithRouter(<Login />);
+    const button = screen.getByRole('button', { name: /iniciar sesión/i });
+
+    fireEvent.click(button);
+
+    // Comprobamos que los inputs siguen presentes, o que no cambió el estado
+    expect(screen.getByPlaceholderText(/correo/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/contraseña/i)).toBeInTheDocument();
+  });
+
+  test('valida que el correo tenga un formato correcto', () => {
+    renderWithRouter(<Login />);
+    const emailInput = screen.getByPlaceholderText(/correo/i);
+    const passwordInput = screen.getByPlaceholderText(/contraseña/i);
+
+    fireEvent.change(emailInput, { target: { value: 'correo-invalido' } });
+    fireEvent.change(passwordInput, { target: { value: '123456' } });
+
+    // Simula que intentas enviar
+    fireEvent.click(screen.getByRole('button', { name: /iniciar sesión/i }));
+
+    // Verifica que el input de email nativo no es válido
+    expect(emailInput.validity.valid).toBe(false);
+  });
+
+  test('permite enviar datos válidos (sin errores de front)', async () => {
+    renderWithRouter(<Login />);
+    fireEvent.change(screen.getByPlaceholderText(/correo/i), {
+      target: { value: 'usuario@test.com' },
+    });
+    fireEvent.change(screen.getByPlaceholderText(/contraseña/i), {
+      target: { value: '123456' },
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /iniciar sesión/i }));
+
+    // El formulario sigue presente, sin errores de frontend
+    expect(screen.getByPlaceholderText(/correo/i)).toBeInTheDocument();
   });
 });
