@@ -9,33 +9,36 @@ function Login() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!email || !password) {
+      setError('Todos los campos son obligatorios.');
+      return;
+    }
+  
     try {
-      // Enviamos los datos de inicio de sesión al backend
       const res = await axios.post('http://localhost:5000/api/usuarios/login', {
-        username: email, // backend espera "username"
+        username: email,
         password,
       });
-
+  
       const token = res.data.token;
       localStorage.setItem('token', token);
       setError('');
-
-      // Decodificamos el token para saber si tiene acceso a /secreto
+  
       const payload = JSON.parse(atob(token.split('.')[1]));
-
+  
       if (payload.accesoSecreto) {
-        alert('Bienvenido admin');
         navigate('/register');
       } else {
-        alert('Login exitoso');
         navigate('/');
       }
     } catch (err) {
       setError('Correo o contraseña incorrectos.');
     }
   };
+  
 
   return (
     <div className="login-container">
@@ -58,11 +61,6 @@ function Login() {
           />
           {error && <p className="login-error">{error}</p>}
           <button type="submit">Iniciar Sesión</button>
-          {/* 
-          <button type="button" className="register-btn" onClick={() => navigate('/register')}>
-            Registrarse
-          </button>
-          */}
         </form>
       </div>
     </div>
