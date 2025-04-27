@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1745721052765" clover="3.2.0">
-  <project timestamp="1745721052765" name="All files">
+<coverage generated="1745724386175" clover="3.2.0">
+  <project timestamp="1745724386175" name="All files">
     <metrics statements="63" coveredstatements="63" conditionals="22" coveredconditionals="22" methods="3" coveredmethods="3" elements="88" coveredelements="88" complexity="0" loc="63" ncloc="63" packages="4" files="4" classes="4"/>
     <package name="backend">
       <metrics statements="8" coveredstatements="8" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
-      <file name="app.js" path="C:\Users\David Penagos\Desktop\MediSync\backend\app.js">
+      <file name="app.js" path="C:\Users\Julian\Documents\UNI\semestre 7\ISO2\Proyecto_final\MediSync\backend\app.js">
         <metrics statements="8" coveredstatements="8" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -18,7 +18,7 @@
     </package>
     <package name="backend.controllers">
       <metrics statements="46" coveredstatements="46" conditionals="22" coveredconditionals="22" methods="3" coveredmethods="3"/>
-      <file name="usuario.controller.js" path="C:\Users\David Penagos\Desktop\MediSync\backend\controllers\usuario.controller.js">
+      <file name="usuario.controller.js" path="C:\Users\Julian\Documents\UNI\semestre 7\ISO2\Proyecto_final\MediSync\backend\controllers\usuario.controller.js">
         <metrics statements="46" coveredstatements="46" conditionals="22" coveredconditionals="22" methods="3" coveredmethods="3"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -70,7 +70,7 @@
     </package>
     <package name="backend.models">
       <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
-      <file name="Usuario.js" path="C:\Users\David Penagos\Desktop\MediSync\backend\models\Usuario.js">
+      <file name="Usuario.js" path="C:\Users\Julian\Documents\UNI\semestre 7\ISO2\Proyecto_final\MediSync\backend\models\Usuario.js">
         <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
@@ -79,7 +79,7 @@
     </package>
     <package name="backend.routes">
       <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
-      <file name="usuario.routes.js" path="C:\Users\David Penagos\Desktop\MediSync\backend\routes\usuario.routes.js">
+      <file name="usuario.routes.js" path="C:\Users\Julian\Documents\UNI\semestre 7\ISO2\Proyecto_final\MediSync\backend\routes\usuario.routes.js">
         <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>

@@ -90,4 +90,19 @@ describe('Modelo Notificacion', () => {
     expect(error).toBeDefined();
     expect(error.errors.tipo_destinatario).toBeDefined();
   });
+
+  it('debería almacenar timestamps automáticamente', async () => {
+    const destinatarioId = new mongoose.Types.ObjectId();
+
+    const notificacion = new Notificacion({
+      tipo_destinatario: 'paciente',
+      destinatario: destinatarioId,
+      contenido: 'Recordatorio de vacuna.'
+    });
+
+    const saved = await notificacion.save();
+
+    expect(saved.createdAt).toBeDefined();
+    expect(saved.updatedAt).toBeDefined();
+  });
 });

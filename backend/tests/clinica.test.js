@@ -63,7 +63,6 @@ describe('Modelo Clinica', () => {
       direccion: 'Calle Falsa 123',
       ciudad: 'Shelbyville',
       datos_contacto: {
-        // Falta teléfono
         email: 'info@sintelefono.com'
       }
     });
@@ -77,5 +76,77 @@ describe('Modelo Clinica', () => {
 
     expect(error).toBeDefined();
     expect(error.errors['datos_contacto.telefono']).toBeDefined();
+  });
+
+  it('debería permitir guardar una clínica sin email de contacto', async () => {
+    const clinica = new Clinica({
+      nombre: 'Clínica sin Email',
+      direccion: 'Calle Real 456',
+      ciudad: 'Capital City',
+      datos_contacto: {
+        telefono: '987654321'
+      }
+    });
+
+    const savedClinica = await clinica.save();
+
+    expect(savedClinica._id).toBeDefined();
+    expect(savedClinica.datos_contacto.email).toBeUndefined();
+  });
+
+  it('debería fallar si falta la dirección', async () => {
+    const clinica = new Clinica({
+      nombre: 'Clínica sin Dirección',
+      ciudad: 'Ogdenville',
+      datos_contacto: {
+        telefono: '5551234'
+      }
+    });
+
+    let error;
+    try {
+      await clinica.save();
+    } catch (err) {
+      error = err;
+    }
+
+    expect(error).toBeDefined();
+    expect(error.errors.direccion).toBeDefined();
+  });
+
+  it('debería fallar si falta la ciudad', async () => {
+    const clinica = new Clinica({
+      nombre: 'Clínica sin Ciudad',
+      direccion: 'Calle Principal 101',
+      datos_contacto: {
+        telefono: '5555678'
+      }
+    });
+
+    let error;
+    try {
+      await clinica.save();
+    } catch (err) {
+      error = err;
+    }
+
+    expect(error).toBeDefined();
+    expect(error.errors.ciudad).toBeDefined();
+  });
+
+  it('debería almacenar timestamps automáticamente', async () => {
+    const clinica = new Clinica({
+      nombre: 'Clínica Timestamps',
+      direccion: 'Calle Temporal 12',
+      ciudad: 'Timeville',
+      datos_contacto: {
+        telefono: '321654987'
+      }
+    });
+
+    const savedClinica = await clinica.save();
+
+    expect(savedClinica.createdAt).toBeDefined();
+    expect(savedClinica.updatedAt).toBeDefined();
   });
 });

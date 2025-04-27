@@ -15,7 +15,7 @@ afterAll(async () => {
 });
 
 afterEach(async () => {
-  if (mongoose.connection.readyState === 1) { // 1 = conectado
+  if (mongoose.connection.readyState === 1) {
     await Paciente.deleteMany({});
   }
 });
@@ -105,5 +105,22 @@ describe('Modelo Paciente', () => {
 
     expect(error).toBeDefined();
     expect(error.errors['datos_contacto.email']).toBeDefined();
+  });
+
+  it('debería guardar correctamente los timestamps', async () => {
+    const paciente = new Paciente({
+      nombre: 'Carla',
+      apellido: 'Sánchez',
+      fecha_nacimiento: new Date('1995-12-10'),
+      genero: 'femenino',
+      datos_contacto: {
+        email: 'carla@example.com'
+      }
+    });
+
+    const saved = await paciente.save();
+
+    expect(saved.createdAt).toBeDefined();
+    expect(saved.updatedAt).toBeDefined();
   });
 });

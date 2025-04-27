@@ -94,4 +94,44 @@ describe('Modelo Medico', () => {
     expect(error).toBeDefined();
     expect(error.code).toBe(11000);
   });
+
+  it('debería fallar si falta el correo electrónico de contacto', async () => {
+    const medico = new Medico({
+      nombre: 'Laura',
+      apellido: 'Santos',
+      especialidad: 'Dermatología',
+      licencia_medica: 'LIC777777',
+      datos_contacto: {
+        telefono: '3124567890',
+        direccion: 'Av. Central 123'
+      }
+    });
+
+    let error;
+    try {
+      await medico.save();
+    } catch (err) {
+      error = err;
+    }
+
+    expect(error).toBeDefined();
+    expect(error.errors['datos_contacto.email']).toBeDefined();
+  });
+
+  it('debería almacenar timestamps automáticamente', async () => {
+    const medico = new Medico({
+      nombre: 'Miguel',
+      apellido: 'Torres',
+      especialidad: 'Ginecología',
+      licencia_medica: 'LIC888888',
+      datos_contacto: {
+        email: 'miguel.torres@hospital.com'
+      }
+    });
+
+    const savedMedico = await medico.save();
+
+    expect(savedMedico.createdAt).toBeDefined();
+    expect(savedMedico.updatedAt).toBeDefined();
+  });
 });
