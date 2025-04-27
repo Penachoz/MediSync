@@ -21,6 +21,9 @@
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.26.3",
+    "@babel/preset-env": "^7.26.9",
+    "@babel/preset-react": "^7.26.3",
+    "identity-obj-proxy": "^3.0.0",
     "jest": "^29.7.0",
     "mongodb-memory-server": "^8.16.1",
     "supertest": "^7.1.0"
