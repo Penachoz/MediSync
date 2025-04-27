@@ -1,9 +1,11 @@
+require('dotenv').config();
 const Usuario = require('../models/Usuario');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+process.env.JWT_SECRET = 'testsecret';
 
-// Correo del admin para registrar
-const CORREO_SECRETO = "admin@secreto.com";//123456
+// Correo secreto para acceso especial
+const CORREO_SECRETO = 'admin@secreto.com';
 
 // Función de validación para datos de registro
 const validarRegistro = (username, password) => {
@@ -19,8 +21,6 @@ const validarRegistro = (username, password) => {
 
 exports.registrar = async (req, res) => {
   try {
-    console.log("Cuerpo recibido:", req.body);
-
     const { username, password, tipo_usuario, estado } = req.body;
 
     // Validación de los datos
@@ -29,24 +29,25 @@ exports.registrar = async (req, res) => {
       return res.status(400).json({ msg: error });
     }
 
-    // Comprobamos si el usuario ya existe
+    // Comprobar si el usuario ya existe
     const usuarioExistente = await Usuario.findOne({ username });
     if (usuarioExistente) {
       return res.status(400).json({ msg: 'El correo electrónico ya está registrado.' });
     }
 
-    // Encriptamos la contraseña
+    // Encriptar la contraseña
     const password_hash = await bcrypt.hash(password, 10);
 
-    const usuario = new Usuario({
+    const nuevoUsuario = new Usuario({
       username,
-      password_hash, // Usar password_hash en lugar de password
+      password_hash,
       tipo_usuario,
       estado: estado || 'activo',
       ultimo_access: new Date()
     });
 
-    await usuario.save();
+    await nuevoUsuario.save();
+
     res.status(201).json({ msg: 'Usuario registrado correctamente' });
   } catch (error) {
     console.error("Error al registrar:", error);
@@ -58,30 +59,36 @@ exports.login = async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    // Validación de datos de entrada
+    // Validar datos de entrada
     if (!username || !password) {
       return res.status(400).json({ msg: 'El correo y la contraseña son obligatorios.' });
     }
 
     const usuario = await Usuario.findOne({ username });
+    if (!usuario) {
+      return res.status(404).json({ msg: 'Usuario no encontrado' });
+    }
 
-    if (!usuario) return res.status(404).json({ msg: 'Usuario no encontrado' });
+    const passwordValido = await bcrypt.compare(password, usuario.password_hash);
+    if (!passwordValido) {
+      return res.status(401).json({ msg: 'Contraseña incorrecta' });
+    }
 
-    const valido = await bcrypt.compare(password, usuario.password_hash); // Cambié esto a password_hash
-    if (!valido) return res.status(401).json({ msg: 'Contraseña incorrecta' });
-
+    // Actualizar último acceso
     usuario.ultimo_access = new Date();
     await usuario.save();
 
-    // Solo este usuario tendrá acceso a la página secreta
-    const esSecreto = usuario.username === CORREO_SECRETO;
+    // Validar configuración crítica
+
+    // Verificar acceso secreto
+    const accesoSecreto = (username === CORREO_SECRETO);
 
     const token = jwt.sign(
       {
         id: usuario._id,
         username: usuario.username,
-        tipo: usuario.tipo_usuario,
-        accesoSecreto: esSecreto // <-- clave que usarás en el frontend
+        tipo_usuario: usuario.tipo_usuario,
+        accesoSecreto
       },
       process.env.JWT_SECRET,
       { expiresIn: '4h' }

@@ -15,7 +15,9 @@ afterAll(async () => {
 });
 
 afterEach(async () => {
-  await Paciente.deleteMany({});
+  if (mongoose.connection.readyState === 1) { // 1 = conectado
+    await Paciente.deleteMany({});
+  }
 });
 
 describe('Modelo Paciente', () => {
