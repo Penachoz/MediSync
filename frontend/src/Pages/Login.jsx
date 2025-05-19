@@ -11,34 +11,38 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!email || !password) {
       setError('Todos los campos son obligatorios.');
       return;
     }
-  
+
     try {
       const res = await axios.post('http://localhost:5000/api/usuarios/login', {
         username: email,
         password,
       });
-  
+
       const token = res.data.token;
       localStorage.setItem('token', token);
-      setError('');
-  
+
+      // Extraer info del token (decodificando el payload)
       const payload = JSON.parse(atob(token.split('.')[1]));
-  
+
+      // Guardar también la info del usuario
+      localStorage.setItem('usuario', JSON.stringify(payload));
+
+      setError('');
+
       if (payload.accesoSecreto) {
         navigate('/register');
       } else {
-        navigate('/');
+        navigate('/home'); // o '/' si así lo prefieres
       }
     } catch (err) {
       setError('Correo o contraseña incorrectos.');
     }
   };
-  
 
   return (
     <div className="login-container">

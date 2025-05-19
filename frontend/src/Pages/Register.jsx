@@ -1,16 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Register.css';
+import { useNavigate } from 'react-router-dom';
 
 function Register() {
   const [form, setForm] = useState({
     email: '',
     password: '',
-    tipo_usuario: 'paciente' // Valor por defecto
+    tipo_usuario: 'paciente'
   });
   const [message, setMessage] = useState('');
   const [messageClass, setMessageClass] = useState('');
   const [loading, setLoading] = useState(false);
+  const [usuarioLogueado, setUsuarioLogueado] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const usuario = JSON.parse(localStorage.getItem('usuario'));
+    if (usuario && usuario.accesoSecreto) {
+      setUsuarioLogueado(usuario);
+    } else {
+      navigate('/login'); // Redirige si no es admin
+    }
+  }, [navigate]);
 
   const handleChange = e => {
     setForm({
@@ -47,8 +59,10 @@ function Register() {
         password: form.password,
         tipo_usuario: form.tipo_usuario
       });
+
       setMessageClass('message');
-      setMessage('Registro exitoso. Ahora puedes iniciar sesión.');
+      setMessage('Registro exitoso.');
+
       setForm({ email: '', password: '', tipo_usuario: 'paciente' });
     } catch (error) {
       setMessageClass('message-error');
@@ -58,45 +72,58 @@ function Register() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('usuario');
+    localStorage.removeItem('token');
+    setUsuarioLogueado(null);
+    navigate('/login');
+  };
+
   return (
     <div className="container">
-      <h2>Registro</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          name="email"
-          placeholder="Correo electrónico"
-          value={form.email}
-          onChange={handleChange}
-          required
-        />
-        <br />
-        <input
-          type="password"
-          name="password"
-          placeholder="Contraseña"
-          value={form.password}
-          onChange={handleChange}
-          required
-        />
-        <br />
-        <select
-          name="tipo_usuario"
-          value={form.tipo_usuario}
-          onChange={handleChange}
-          required>
-          <option value="medico">Médico</option>
-          <option value="paciente">Paciente</option>
-        </select>
-        <br />
-        <button type="submit" disabled={loading}>
-          {loading ? 'Registrando...' : 'Registrar'}
-        </button>
-      </form>
+      <h2>Registro (Solo Admin)</h2>
+
+      {usuarioLogueado && (
+        <>
+
+          <form onSubmit={handleSubmit}>
+            <input
+              type="email"
+              name="email"
+              placeholder="Correo electrónico"
+              value={form.email}
+              onChange={handleChange}
+              required
+            />
+            <br />
+            <input
+              type="password"
+              name="password"
+              placeholder="Contraseña"
+              value={form.password}
+              onChange={handleChange}
+              required
+            />
+            <br />
+            <select
+              name="tipo_usuario"
+              value={form.tipo_usuario}
+              onChange={handleChange}
+              required
+            >
+              <option value="medico">Médico</option>
+              <option value="paciente">Paciente</option>
+            </select>
+            <br />
+            <button type="submit" disabled={loading}>
+              {loading ? 'Registrando...' : 'Registrar'}
+            </button>
+            <button onClick={handleLogout}>Cerrar sesión</button>
+          </form>
+        </>
+      )}
+      
       {message && <p className={messageClass}>{message}</p>}
-      {/*<div className="redirect-link">
-        <p>¿Ya tienes una cuenta? <a href="/login">Inicia sesión aquí</a></p>
-      </div>*/}
     </div>
   );
 }
