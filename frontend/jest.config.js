@@ -10,15 +10,16 @@ module.exports = {
   collectCoverage: true,
   collectCoverageFrom: [
     "src/**/*.{js,jsx}",
-    "!src/index.js",               // excluye index.js
-    "!src/reportWebVitals.js",    // excluye métricas
-    "!jest.config.js"             // por si Jest lo incluye desde src (aunque debería estar fuera)
+    "!src/index.js",
+    "!src/reportWebVitals.js",
+    "!jest.config.js"
   ],
-  coveragePathIgnorePatterns: [   // asegura que se ignoren del coverage aunque estén importados
+  coveragePathIgnorePatterns: [
     "/node_modules/",
     "src/index.js",
     "src/reportWebVitals.js"
   ],
+  coverageReporters: ["lcov", "text", "json-summary"], // 👈 nuevo
   moduleNameMapper: {
     "\\.(css|less)$": "identity-obj-proxy"
   }

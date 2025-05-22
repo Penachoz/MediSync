@@ -15,7 +15,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!@toolz/allow-react)/\" --env=jsdom"
+     "test": "jest",
+      "test:coverage": "jest --coverage"
+
   },
   "eslintConfig": {
     "extends": [
