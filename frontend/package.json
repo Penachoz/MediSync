@@ -1,8 +1,6 @@
 {
   "name": "@toolz/allow-react",
   "dependencies": {
-    "@testing-library/jest-dom": "^5.11.9",
-    "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^12.7.2",
     "@toolz/allow": "^1.0.1",
     "@toolz/is-a-regular-object-react": "^1.0.0",
@@ -14,9 +12,7 @@
     "web-vitals": "^1.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!axios)/\"",
-    "test:coverage": "jest --coverage"
+    "sonar": "node sonar-project.js"
   },
   "eslintConfig": {
     "extends": [
@@ -30,7 +26,11 @@
     "@babel/preset-env": "^7.27.2",
     "@babel/preset-react": "^7.27.1",
     "@playwright/test": "^1.52.0",
-    "babel-jest": "^29.7.0"
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "babel-jest": "^29.7.0",
+    "jest": "^27.5.1",
+    "sonarqube-scanner": "^4.3.0"
   },
   "browserslist": {
     "production": [
