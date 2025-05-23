@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Login.css';
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +8,25 @@ function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  // 🚫 Redirección automática si ya hay sesión activa
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        if (payload.accesoSecreto) {
+          navigate('/register');
+        } else {
+          navigate('/home');
+        }
+      } catch {
+        // Si falla el token, lo limpiamos
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuario');
+      }
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,10 +45,7 @@ function Login() {
       const token = res.data.token;
       localStorage.setItem('token', token);
 
-      // Extraer info del token (decodificando el payload)
       const payload = JSON.parse(atob(token.split('.')[1]));
-
-      // Guardar también la info del usuario
       localStorage.setItem('usuario', JSON.stringify(payload));
 
       setError('');
@@ -37,7 +53,7 @@ function Login() {
       if (payload.accesoSecreto) {
         navigate('/register');
       } else {
-        navigate('/home'); // o '/' si así lo prefieres
+        navigate('/home');
       }
     } catch (err) {
       setError('Correo o contraseña incorrectos.');
