@@ -26,3 +26,4 @@ test('muestra el formulario de registro si es admin', () => {
   expect(screen.getByPlaceholderText(/contraseña/i)).toBeInTheDocument();
   expect(screen.getByRole('button', { name: /registrar/i })).toBeInTheDocument();
 });
+//prueba

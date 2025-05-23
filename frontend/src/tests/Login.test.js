@@ -14,3 +14,4 @@ test('muestra el formulario de login', () => {
   expect(screen.getByPlaceholderText(/contraseña/i)).toBeInTheDocument();
   expect(screen.getByRole('button', { name: /iniciar sesión/i })).toBeInTheDocument();
 });
+//prueba

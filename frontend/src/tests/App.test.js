@@ -6,3 +6,4 @@ test('muestra el título de bienvenida', () => {
   const title = screen.getByText(/bienvenido a medisync/i);
   expect(title).toBeInTheDocument();
 });
+//prueba
