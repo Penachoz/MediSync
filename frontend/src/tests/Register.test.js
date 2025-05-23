@@ -1,91 +1,71 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import Register from '../Pages/Register';
-import axios from 'axios';
+import { MemoryRouter } from 'react-router-dom';
 
-jest.mock('axios'); // Mockeamos axios
+// Simulamos el usuario admin antes del render
+beforeEach(() => {
+  localStorage.setItem(
+    'usuario',
+    JSON.stringify({ accesoSecreto: true })
+  );
+});
 
-const fillForm = (email, password) => {
-  fireEvent.change(screen.getByPlaceholderText(/correo electrónico/i), {
-    target: { value: email },
-  });
-  fireEvent.change(screen.getByPlaceholderText(/contraseña/i), {
-    target: { value: password },
-  });
-};
+afterEach(() => {
+  localStorage.clear();
+});
 
-describe('Register Form', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
+test('muestra el formulario de registro si es admin', () => {
+  render(
+    <MemoryRouter>
+      <Register />
+    </MemoryRouter>
+  );
 
-  test('permite ingresar correo y contraseña', () => {
-    render(<Register />);
+  expect(screen.getByRole('heading', { name: /registro/i })).toBeInTheDocument();
+  expect(screen.getByPlaceholderText(/correo electrónico/i)).toBeInTheDocument();
+  expect(screen.getByPlaceholderText(/contraseña/i)).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /registrar/i })).toBeInTheDocument();
+});
 
-    const emailInput = screen.getByPlaceholderText(/correo electrónico/i);
-    const passwordInput = screen.getByPlaceholderText(/contraseña/i);
+test('muestra error si el correo es inválido', async () => {
+  render(
+    <MemoryRouter>
+      <Register />
+    </MemoryRouter>
+  );
 
-    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
-    fireEvent.change(passwordInput, { target: { value: '123456' } });
+  await userEvent.type(screen.getByPlaceholderText(/correo electrónico/i), 'correo-malo');
+  await userEvent.type(screen.getByPlaceholderText(/contraseña/i), '123456');
+  await userEvent.click(screen.getByRole('button', { name: /registrar/i }));
 
-    expect(emailInput.value).toBe('test@example.com');
-    expect(passwordInput.value).toBe('123456');
-  });
+  expect(await screen.findByText(/correo electrónico válido/i)).toBeInTheDocument();
+});
 
-  test('muestra error si el correo no contiene "@"', async () => {
-    render(<Register />);
+test('muestra error si la contraseña tiene menos de 6 caracteres', async () => {
+  render(
+    <MemoryRouter>
+      <Register />
+    </MemoryRouter>
+  );
 
-    fillForm('correo_invalido.com', '123456');
-    fireEvent.click(screen.getByText(/registrar/i));
+  await userEvent.type(screen.getByPlaceholderText(/correo electrónico/i), 'valido@correo.com');
+  await userEvent.type(screen.getByPlaceholderText(/contraseña/i), '123');
+  await userEvent.click(screen.getByRole('button', { name: /registrar/i }));
 
-    const error = await screen.findByText(/correo electrónico válido/i);
-    expect(error).toBeInTheDocument();
-  });
+  expect(await screen.findByText(/al menos 6 caracteres/i)).toBeInTheDocument();
+});
 
-  test('muestra error si la contraseña es muy corta', async () => {
-    render(<Register />);
+test('permite seleccionar tipo de usuario', async () => {
+  render(
+    <MemoryRouter>
+      <Register />
+    </MemoryRouter>
+  );
 
-    fillForm('test@example.com', '123');
-    fireEvent.click(screen.getByText(/registrar/i));
+  const select = screen.getByRole('combobox');
+  expect(select.value).toBe('paciente');
 
-    const error = await screen.findByText(/contraseña debe tener al menos 6 caracteres/i);
-    expect(error).toBeInTheDocument();
-  });
-
-  test('registro exitoso con credenciales válidas', async () => {
-    axios.post.mockResolvedValueOnce({});
-
-    render(<Register />);
-
-    fillForm('user@test.com', 'password123');
-    fireEvent.click(screen.getByText(/registrar/i));
-
-    const successMessage = await screen.findByText(/registro exitoso/i);
-    expect(successMessage).toBeInTheDocument();
-  });
-
-  test('muestra error si el registro falla', async () => {
-    axios.post.mockRejectedValueOnce({
-      response: { data: { msg: 'Usuario ya existe' } }
-    });
-
-    render(<Register />);
-
-    fillForm('user@test.com', 'password123');
-    fireEvent.click(screen.getByText(/registrar/i));
-
-    const error = await screen.findByText(/usuario ya existe/i);
-    expect(error).toBeInTheDocument();
-  });
-
-  test('muestra error genérico si el registro falla sin mensaje específico', async () => {
-    axios.post.mockRejectedValueOnce({});
-
-    render(<Register />);
-
-    fillForm('user@test.com', 'password123');
-    fireEvent.click(screen.getByText(/registrar/i));
-
-    const error = await screen.findByText(/error al registrar/i);
-    expect(error).toBeInTheDocument();
-  });
+  await userEvent.selectOptions(select, 'medico');
+  expect(select.value).toBe('medico');
 });

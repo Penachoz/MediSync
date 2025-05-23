@@ -15,7 +15,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!@toolz/allow-react)/\" --env=jsdom"
+    "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!axios)/\"",
+    "test:coverage": "jest --coverage"
   },
   "eslintConfig": {
     "extends": [
@@ -24,7 +25,12 @@
     ]
   },
   "devDependencies": {
-    "@babel/plugin-transform-modules-commonjs": "^7.12.13"
+    "@babel/core": "^7.27.1",
+    "@babel/plugin-transform-modules-commonjs": "^7.12.13",
+    "@babel/preset-env": "^7.27.2",
+    "@babel/preset-react": "^7.27.1",
+    "@playwright/test": "^1.52.0",
+    "babel-jest": "^29.7.0"
   },
   "browserslist": {
     "production": [
