@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import Login from '../Pages/Login';
 import { MemoryRouter } from 'react-router-dom';
 
-test('renderiza formulario de login', () => {
+test('muestra el formulario de login', () => {
   render(
     <MemoryRouter>
       <Login />
